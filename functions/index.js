@@ -5,6 +5,9 @@ import { onRequest } from 'firebase-functions/v2/https'
 import {
   getPlaces,
 } from './src/controllers/places.controller.js'
+import {
+  getGeocode
+} from './src/controllers/geocode.controller.js'
 
 const app = express()
 
@@ -20,6 +23,11 @@ app.get(
 app.post(
   '/places/',
   getPlaces)
+
+app.get(
+  '/geocode/',
+  getGeocode,
+)
 
 export const api = onRequest(
   {
