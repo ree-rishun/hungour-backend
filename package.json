@@ -1,0 +1,21 @@
+{
+  "name": "hungour-backend",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "npx functions-framework --target=index --signature-type=cloudevent",
+    "debug": "npm run build:debug && node --inspect node_modules/.bin/functions-framework --target=chk1 --signature-type=http"
+  },
+  "author": "conop",
+  "license": "MIT",
+  "devDependencies": {
+    "@google-cloud/functions-framework": "^3.4.0"
+  },
+  "dependencies": {
+    "@google-cloud/cloud-sql-connector": "^1.3.0",
+    "@google-cloud/pubsub": "^4.3.3",
+    "fs": "^0.0.1-security",
+    "googleapis": "^135.0.0",
+    "mysql2": "^3.9.7"
+  }
+}
