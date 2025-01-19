@@ -10,7 +10,15 @@ const app = express()
 
 
 app.get(
-  '/api/places/',
+  '/',
+  (req, res) => {
+    res.send(
+      'hello api',
+    )
+  })
+
+app.post(
+  '/places/',
   getPlaces)
 
 export const api = onRequest(
