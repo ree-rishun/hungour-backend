@@ -2,7 +2,7 @@
   "name": "functions",
   "description": "Cloud Functions for Firebase",
   "scripts": {
-    "serve": "firebase emulators:start --only functions",
+    "dev": "firebase emulators:start --only functions",
     "deploy": "firebase deploy --only functions",
     "start": "node server.js",
     "lint": "eslint \"{src/**/*.js, index.js}\"",
