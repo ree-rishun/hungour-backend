@@ -4,9 +4,10 @@ import { onRequest } from 'firebase-functions/v2/https'
 
 import {
   getPlaces,
+  getPhoto,
 } from './src/controllers/places.controller.js'
 import {
-  getGeocode
+  getGeocode,
 } from './src/controllers/geocode.controller.js'
 
 const app = express()
@@ -27,6 +28,10 @@ app.post(
 app.get(
   '/geocode/',
   getGeocode,
+)
+app.get(
+  '/places/photos/',
+  getPhoto,
 )
 
 export const api = onRequest(

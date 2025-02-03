@@ -6,7 +6,6 @@ const GOOGLE_PLACES_API = 'https://places.googleapis.com/v1/places:searchText'
 
 
 export const getPlaces = async (req, res) => {
-
   const rc = new RemoteConfig()
   await rc.init()
 
@@ -73,7 +72,6 @@ const filterPlaces = (places, departureInMinutes, nowPosition) => {
         now.getTime()
         + (departureInMinutes + 90 + (60 * distance / walkingSpeedKmH)) * 60 * 1000)
 
-
       // regularOpeningHours.nextCloseTime + utcOffsetMinutes を計算
       const nextCloseTime = new Date(place.regularOpeningHours.nextCloseTime)
       const adjustedCloseTime = new Date(nextCloseTime.getTime() + place.utcOffsetMinutes * 60 * 1000)
@@ -82,7 +80,7 @@ const filterPlaces = (places, departureInMinutes, nowPosition) => {
         visitEndTime < adjustedCloseTime  // 営業終了90分前に到着できる
         || (place.regularOpeningHours && place.regularOpeningHours.nextCloseTime === undefined) // 24時間営業
       ) {
-        place.extWalkTime = departureInMinutes + 90 + (60 * distance / walkingSpeedKmH)
+        place.extWalkTime = 60 * distance / walkingSpeedKmH
         res.push(place)
       } else {
         console.log(`place.regularOpeningHours.nextCloseTime : ${place.regularOpeningHours?.nextCloseTime ?? place.regularOpeningHours}`)
@@ -96,4 +94,25 @@ const filterPlaces = (places, departureInMinutes, nowPosition) => {
   }
 
   return res
+}
+
+export const getPhoto = async (req, res) => {
+  const rc = new RemoteConfig()
+  await rc.init()
+  const { name, maxWidth = 400 } = req.query
+
+  if (!name) {
+    return res.status(400).json({ error: 'photo_reference is required' })
+  }
+
+  try {
+    const photoUrl = `https://places.googleapis.com/v1/${name}/media?key=${rc.getEnv('GOOGLE_API_KEY')}&maxWidthPx=${maxWidth}`
+    const response = await axios.get(photoUrl, { responseType: 'arraybuffer' })
+
+    console.log(response)
+    res.set('Content-Type', response.headers['content-type'])
+    res.send(response.data)
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch image' })
+  }
 }
