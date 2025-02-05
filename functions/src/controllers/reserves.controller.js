@@ -4,7 +4,6 @@ import { sendMessage } from '../services/line.service.js'
 import {getEnv} from '../config/remoteConfig.config.js'
 
 const COLLECTION_NAME = 'reserves'
-const CLIENT_BASE_URL = 'https://a559-240f-34-da63-1-d53e-8405-6d41-3857.ngrok-free.app'
 
 export const readReserve = async (req, res) => {
   const db = await initFirestore()
