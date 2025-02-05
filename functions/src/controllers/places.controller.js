@@ -1,13 +1,11 @@
 import axios from 'axios'
-import RemoteConfig from '../services/remoteConfig.service.js'
+import {getEnv} from '../config/remoteConfig.config.js'
 import { calculateDistance } from '../utils/haversine.util.js'
 
 const GOOGLE_PLACES_API = 'https://places.googleapis.com/v1/places:searchText'
 
 
 export const getPlaces = async (req, res) => {
-  const rc = new RemoteConfig()
-  await rc.init()
 
   const r = await axios.post(
     GOOGLE_PLACES_API,
@@ -30,7 +28,7 @@ export const getPlaces = async (req, res) => {
     {
       headers: {
         'Content-Type': 'application/json',
-        'X-Goog-Api-Key': `${rc.getEnv('GOOGLE_API_KEY')}`,
+        'X-Goog-Api-Key': `${await getEnv('GOOGLE_API_KEY')}`,
         'X-Goog-FieldMask': '*',
       },
     },
@@ -97,8 +95,6 @@ const filterPlaces = (places, departureInMinutes, nowPosition) => {
 }
 
 export const getPhoto = async (req, res) => {
-  const rc = new RemoteConfig()
-  await rc.init()
   const { name, maxWidth = 400 } = req.query
 
   if (!name) {
@@ -106,7 +102,7 @@ export const getPhoto = async (req, res) => {
   }
 
   try {
-    const photoUrl = `https://places.googleapis.com/v1/${name}/media?key=${rc.getEnv('GOOGLE_API_KEY')}&maxWidthPx=${maxWidth}`
+    const photoUrl = `https://places.googleapis.com/v1/${name}/media?key=${await getEnv('GOOGLE_API_KEY')}&maxWidthPx=${maxWidth}`
     const response = await axios.get(photoUrl, { responseType: 'arraybuffer' })
 
     console.log(response)

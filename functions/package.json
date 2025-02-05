@@ -13,8 +13,10 @@
   },
   "main": "index.js",
   "dependencies": {
+    "@line/bot-sdk": "^9.5.3",
     "axios": "^1.7.2",
     "express": "^4.19.2",
+    "firebase": "^11.2.0",
     "firebase-admin": "^11.11.1",
     "firebase-functions": "^4.9.0",
     "googleapis": "^135.0.0"
