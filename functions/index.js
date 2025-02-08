@@ -18,6 +18,7 @@ import {
 } from './src/controllers/reserves.controller.js'
 import {
   signinUser,
+  activateUser,
 } from './src/controllers/users.controller.js'
 
 const app = express()
@@ -63,6 +64,11 @@ app.post(
 app.post(
   '/users/signin/',
   signinUser,
+)
+
+app.post(
+  '/users/activate/',
+  activateUser,
 )
 
 const init = async(req, res, next) => {
