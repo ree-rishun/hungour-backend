@@ -46,4 +46,4 @@ jobs:
         working-directory: ./functions
 
       - name: Deploy to Firebase
-        run: firebase -P production deploy --only functions --force
+        run: firebase deploy --only functions --force
