@@ -3,7 +3,7 @@ import { initFirestore } from '../config/firestore.config.js'
 import { sendMessage } from '../services/line.service.js'
 import {getEnv} from '../config/remoteConfig.config.js'
 
-const COLLECTION_NAME = 'reserves'
+const COLLECTION_NAME = 'concierges'
 
 export const readReserve = async (req, res) => {
   const db = await initFirestore()
