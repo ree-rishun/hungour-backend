@@ -18,7 +18,7 @@ export const readReserve = async (req, res) => {
 
   if (! docSnap.exists()) {
     // TODO: エラーハンドリング
-    console.error('reserves doc not found')
+    console.error(`${COLLECTION_NAME} doc not found`)
   }
 
   res.send(
@@ -61,7 +61,7 @@ export const startReserve = async (req, res) => {
 
   if (! docSnap.exists()) {
     // TODO: エラーハンドリング
-    console.error('reserves doc not found')
+    console.error(`${COLLECTION_NAME} doc not found`)
   }
 
   // TODO: user_id照会

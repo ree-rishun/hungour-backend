@@ -3,23 +3,47 @@ name: Deploy Firebase Functions
   push:
     branches:
       - main
+defaults:
+  run:
+    working-directory: "functions"
 jobs:
-  build_and_deploy:
+  deploy_functions_prod:
+    env:
+      FIREBASE_TOOLS_VERSION: "12.4.8"
+      GOOGLE_APPLICATION_CREDENTIALS: "$HOME/firebase-key.json"
+      GCLOUD_SERVICE_KEY: ${{ secrets.PRD_GCP_SA_KEY }}
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v3
         with:
-          node-version: '20'
-      - run: npm ci
-        working-directory: functions
-      - run: npm run build
-        working-directory: functions
-        continue-on-error: true
-      - run: npm install -g firebase-tools
-      - run: echo '${{ secrets.PRD_FIREBASE_SERVICE_ACCOUNT }}' > "$HOME/firebase-key.json"
-      - run: export GOOGLE_APPLICATION_CREDENTIALS="$HOME/firebase-key.json"
-      - run: export FIREBASE_SERVICE_ACCOUNT="$HOME/firebase-key.json"
-      - run: firebase deploy --only functions --project ${{ vars.PRD_PROJECT_ID }}
-        env:
-          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.PRD_FIREBASE_SERVICE_ACCOUNT }}
+          node-version: "18.x"
+          cache: "npm"
+          cache-dependency-path: "functions/package-lock.json"
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: ${{ vars.PRD_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.PRD_SERVICE_ACCOUNT }}
+          create_credentials_file: true
+          export_environment_variables: true
+
+      - name: make GOOGLE_APPLICATION_CREDENTIALS
+        run: echo $GCLOUD_SERVICE_KEY > $GOOGLE_APPLICATION_CREDENTIALS
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools@${FIREBASE_TOOLS_VERSION}
+
+      - name: Install Dependencies
+        run: npm install
+        working-directory: ./functions
+
+      - name: Deploy to Firebase
+        run: firebase -P production deploy --only functions --force
