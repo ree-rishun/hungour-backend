@@ -72,18 +72,30 @@ export const deployPod = async (conciergeId) => {
     const token = await auth.getAccessToken()
 
     console.log('デプロイ実行')
+    const getRes = await axios.get(
+      `https://${cluster.data.endpoint}/api/v1/pods`,
+      {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+          'Content-Type': 'application/json',
+        },
+        httpsAgent: new https.Agent({
+          rejectUnauthorized: false, // 証明書の検証をスキップ
+        }),
+      })
+    console.log(getRes)
     const res = await axios.post(
-      `https://${cluster.data.endpoint}/apis/v1/namespaces/${namespace}/pods`,
+      `https://${cluster.data.endpoint}/api/v1/namespaces/${namespace}/pods`,
       req,
       {
         headers: {
           Authorization: `Bearer ${token.token}`,
           'Content-Type': 'application/json',
         },
-      httpsAgent: new https.Agent({
-        rejectUnauthorized: false, // 証明書の検証をスキップ
-      }),
-    });
+        httpsAgent: new https.Agent({
+          rejectUnauthorized: false, // 証明書の検証をスキップ
+        }),
+      })
 
     console.log(res)
     return null
