@@ -73,7 +73,7 @@ export const deployPod = async (conciergeId) => {
 
     console.log('デプロイ実行')
     const res = await axios.post(
-      `https://${cluster.data.endpoint}/apis/batch/v1/namespaces/${namespace}/jobs`,
+      `https://${cluster.data.endpoint}/apis/v1/namespaces/${namespace}/pods`,
       req,
       {
         headers: {
