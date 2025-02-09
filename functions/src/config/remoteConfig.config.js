@@ -14,7 +14,7 @@ const initRemoteConfig = async () => {
 }
 
 export const getEnv = async (path) => {
-  if (configs[path]?.defaultValue.value) {
+  if (Object.keys(configs).length === 0) {
     await initRemoteConfig()
   }
   return configs[path]?.defaultValue.value ?? null
