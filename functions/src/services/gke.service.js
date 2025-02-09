@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { google } from 'googleapis'
+import https from 'https'
 import {getEnv} from '../config/remoteConfig.config.js'
 
 export const deployPod = async (conciergeId) => {
@@ -90,7 +91,7 @@ export const deployPod = async (conciergeId) => {
           Authorization: `Bearer ${token.token}`,
           'Content-Type': 'application/json',
         },
-      httpsAgent: new (require('https').Agent)({
+      httpsAgent: new https.Agent({
         rejectUnauthorized: false, // 証明書の検証をスキップ
       }),
     });
