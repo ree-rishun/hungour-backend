@@ -37,6 +37,7 @@ export const createReserve = async (req, res) => {
       departure_time: req.body.departure_time,
       party_size: req.body.party_size,
       seat_type: req.body.seat_type,
+      reserved_time: null,
       cursor: 0,
       status: 'created',
       created_at: serverTimestamp(),
