@@ -40,14 +40,6 @@ const allowCrossDomain = function(req, res, next) {
 }
 app.use(allowCrossDomain)
 
-app.get(
-  '/',
-  (req, res) => {
-    res.send(
-      'hello api',
-    )
-  })
-
 app.post(
   '/places/',
   getPlaces)
