@@ -22,7 +22,7 @@ export const deployPod = async (conciergeId) => {
       apiVersion: 'v1',
       kind: 'Pod',
       metadata: {
-        name: `concierge-${conciergeId}`,
+        name: `concierge-${conciergeId.toLowerCase()}`,
         namespace: namespace,
         labels: {
           app: deploymentName,
