@@ -84,12 +84,17 @@ export const deployPod = async (conciergeId) => {
     console.log('デプロイ実行')
     const res = await axios.post(
       `https://${cluster.data.endpoint}/apis/batch/v1/namespaces/${namespace}/jobs`,
-      req, {
-      headers: {
-        Authorization: `Bearer ${token.token}`,
-        "Content-Type": "application/json",
-      },
-    })
+      req,
+      {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+          'Content-Type': 'application/json',
+        },
+      httpsAgent: new (require('https').Agent)({
+        rejectUnauthorized: false, // 証明書の検証をスキップ
+      }),
+    });
+
     console.log(res)
     return null
   } catch (err) {
