@@ -1,6 +1,7 @@
 import { addDoc, collection, doc, getDoc, serverTimestamp, updateDoc, } from 'firebase/firestore'
 import { initFirestore } from '../config/firestore.config.js'
 import { sendMessage } from '../services/line.service.js'
+import { deployPod } from '../services/gke.service.js'
 import {getEnv} from '../config/remoteConfig.config.js'
 
 const COLLECTION_NAME = 'concierges'
@@ -74,7 +75,8 @@ export const startReserve = async (req, res) => {
     updated_at: serverTimestamp(),
   })
 
-  // TODO: 予約サーバへ予約開始フック
+  // 予約サーバへ予約開始フック
+  deployPod(reserveId)
 
   //　LINEによる予約開始通知
   const clientUrl = await getEnv('CLIENT_BASE_URL')
