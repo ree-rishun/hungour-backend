@@ -19,65 +19,54 @@ export const deployPod = async (conciergeId) => {
     const deploymentName = await getEnv('DEPLOYMENT_NAME')
     const namespace = await getEnv('NAMESPACE')
     const req = {
-      apiVersion: 'apps/v1',
-      kind: 'Deployment',
+      apiVersion: 'v1',
+      kind: 'Pod',
       metadata: {
         name: deploymentName,
         namespace: namespace,
+        labels: {
+          app: deploymentName,
+          podId: conciergeId,
+        }
       },
       spec: {
-        replicas: 1,  // 1つのPodを作成
-        selector: {
-          matchLabels: {
-            app: deploymentName,
-          },
-        },
-        template: {
-          metadata: {
-            labels: {
-              app: deploymentName,
-              conciergeId: conciergeId,
-            },
-          },
-          spec: {
-            containers: [
+        restartPolicy: 'Never',
+        containers: [
+          {
+            name: 'app',
+            image: await getEnv('STREAMING_SERVER_IMAGE'),
+            env: [
               {
-                name: 'app',
-                image: await getEnv('STREAMING_SERVER_IMAGE'),
-                env: [
-                  {
-                    name: 'CONCIERGE_ID',
-                    value: conciergeId,
-                  },
-                  {
-                    name: 'PROJECT_ID',
-                    value: projectId,
-                  },
-                  {
-                    name: 'API_URL',
-                    value: await getEnv('API_URL'),
-                  },
-                  {
-                    name: 'TWILIO_ACCOUNT_SID',
-                    value: await getEnv('TWILIO_ACCOUNT_SID'),
-                  },
-                  {
-                    name: 'TWILIO_AUTH_TOKEN',
-                    value: await getEnv('TWILIO_AUTH_TOKEN'),
-                  },
-                  {
-                    name: 'TWILIO_TEL_FROM',
-                    value: await getEnv('TWILIO_TEL_FROM'),
-                  },
-                  {
-                    name: 'GEMINI_API_KEY',
-                    value: await getEnv('GEMINI_API_KEY'),
-                  },
-                ],
+                name: 'CONCIERGE_ID',
+                value: conciergeId,
+              },
+              {
+                name: 'PROJECT_ID',
+                value: projectId,
+              },
+              {
+                name: 'API_URL',
+                value: await getEnv('API_URL'),
+              },
+              {
+                name: 'TWILIO_ACCOUNT_SID',
+                value: await getEnv('TWILIO_ACCOUNT_SID'),
+              },
+              {
+                name: 'TWILIO_AUTH_TOKEN',
+                value: await getEnv('TWILIO_AUTH_TOKEN'),
+              },
+              {
+                name: 'TWILIO_TEL_FROM',
+                value: await getEnv('TWILIO_TEL_FROM'),
+              },
+              {
+                name: 'GEMINI_API_KEY',
+                value: await getEnv('GEMINI_API_KEY'),
               },
             ],
           },
-        },
+        ],
       },
     }
     const token = await auth.getAccessToken()
