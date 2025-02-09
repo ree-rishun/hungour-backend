@@ -43,7 +43,7 @@ export const deployPod = async (conciergeId) => {
             containers: [
               {
                 name: 'app',
-                image: getEnv('STREAMING_SERVER_IMAGE'),
+                image: await getEnv('STREAMING_SERVER_IMAGE'),
                 env: [
                   {
                     name: 'CONCIERGE_ID',
