@@ -1,48 +1,84 @@
-import { execSync } from 'child_process'
-import { getEnv } from '../config/remoteConfig.config.js'
+import { google } from 'googleapis'
+import {getEnv} from '../config/remoteConfig.config.js'
 
-export const deployPod = (conciergeId) => {
+export const deployPod = async (conciergeId) => {
   try {
-    // Kubernetes Job の YAML を作成
-    const jobYaml = `
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: concierge-${conciergeId}
-spec:
-  template:
-    metadata:
-      labels:
-        concierge-id: "${conciergeId}"
-    spec:
-      restartPolicy: Never
-      containers:
-      - name: process-worker
-        image: ${getEnv('STREAMING_SERVER_IMAGE')}
-        env:
-        - name: CONCIERGE_ID
-          value: "${conciergeId}"
-        - name: 
-          value: "${getEnv('PROJECT_ID')}"
-        - name: 
-          value: "${getEnv('API_URL')}"
-        - name: 
-          value: "${getEnv('TWILIO_ACCOUNT_SID')}"
-        - name: 
-          value: "${getEnv('TWILIO_AUTH_TOKEN')}"
-        - name: 
-          value: "${getEnv('TWILIO_TEL_FROM')}"
-        - name: 
-          value: "${getEnv('GEMINI_API_KEY')}"
-  backoffLimit: 0
-`
+    const auth = await google.auth.getClient({
+      scopes: ['https://www.googleapis.com/auth/cloud-platform'],
+    })
+    const kubernetes = google.container({
+      version: 'v1',
+      auth: auth,
+    })
+    const projectId = await getEnv('PROJECT_ID')
+    const deploymentName = await getEnv('DEPLOYMENT_NAME')
+    const request = {
+      parent: `projects/${projectId}/locations/${await getEnv('REGION')}/clusters/${await getEnv('CLUSTER_NAME')}`,
+      body: {
+        apiVersion: 'apps/v1',
+        kind: 'Deployment',
+        metadata: {
+          name: deploymentName,
+          namespace: await getEnv('NAMESPACE'),
+        },
+        spec: {
+          replicas: 1,  // 1つのPodを作成
+          selector: {
+            matchLabels: {
+              app: deploymentName,
+            },
+          },
+          template: {
+            metadata: {
+              labels: {
+                app: deploymentName,
+                conciergeId: conciergeId,
+              },
+            },
+            spec: {
+              containers: [
+                {
+                  name: 'app',
+                  image: getEnv('STREAMING_SERVER_IMAGE'),
+                  env: [
+                    {
+                      name: 'CONCIERGE_ID',
+                      value: conciergeId,
+                    },
+                    {
+                      name: 'PROJECT_ID',
+                      value: projectId,
+                    },
+                    {
+                      name: 'API_URL',
+                      value: await getEnv('API_URL'),
+                    },
+                    {
+                      name: 'TWILIO_ACCOUNT_SID',
+                      value: await getEnv('TWILIO_ACCOUNT_SID'),
+                    },
+                    {
+                      name: 'TWILIO_AUTH_TOKEN',
+                      value: await getEnv('TWILIO_AUTH_TOKEN'),
+                    },
+                    {
+                      name: 'TWILIO_TEL_FROM',
+                      value: await getEnv('TWILIO_TEL_FROM'),
+                    },
+                    {
+                      name: 'GEMINI_API_KEY',
+                      value: await getEnv('GEMINI_API_KEY'),
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      },
+    }
 
-    // YAML を適用して Job を作成
-    execSync(
-      `echo '${jobYaml}' | gcloud container clusters get-credentials ${getEnv('CLUSTER_NAME')} --region ${getEnv('REGION')} && kubectl apply -f -`,
-      { stdio: "inherit" }
-    )
-
+    await kubernetes.projects.locations.clusters.nodePools.create(request)
     return null
   } catch (err) {
     return err
