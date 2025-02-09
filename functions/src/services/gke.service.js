@@ -71,7 +71,6 @@ export const deployPod = async (conciergeId) => {
     }
     const token = await auth.getAccessToken()
 
-    console.log('デプロイ実行')
     const res = await axios.post(
       `https://${cluster.data.endpoint}/api/v1/namespaces/${namespace}/pods`,
       req,
