@@ -78,9 +78,11 @@ export const deployPod = async (conciergeId) => {
       },
     }
 
-    await kubernetes.projects.locations.clusters.nodePools.create(request)
+    console.log('デプロイ実行')
+    const res = await kubernetes.projects.locations.clusters.nodePools.create(request)
+    console.log(res)
     return null
   } catch (err) {
-    return err
+    console.error(err)
   }
 }
