@@ -1,7 +1,8 @@
-import admin from 'firebase-admin'
+import { getAuth } from 'firebase/auth'
 
 export const createCustomToken = async (sub, name, picture) => {
-  return await admin.auth().createCustomToken(sub, {
+  const auth = getAuth()
+  return await auth.createCustomToken(sub, {
     name,
     picture
   })
