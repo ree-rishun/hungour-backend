@@ -11,9 +11,9 @@ export const signinUser = async (req, res) => {
   const userId = req.body.user_id
   const docRef = doc(db, COLLECTION_NAME, userId)
   const docSnap = await getDoc(docRef)
-  const lineToken = req.body.line_token
+  // const lineToken = req.body.line_token
 
-  const lineUserInfo = await getUserInfo(lineToken)
+  // await getUserInfo(lineToken)
   // const customToken = await createCustomToken(lineUserInfo)
 
   if (docSnap.exists()) {
