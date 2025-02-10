@@ -14,7 +14,7 @@ export const signinUser = async (req, res) => {
   const lineToken = req.body.line_token
 
   const lineUserInfo = await getUserInfo(lineToken)
-  const customToken = await createCustomToken(lineUserInfo)
+  // const customToken = await createCustomToken(lineUserInfo)
 
   if (docSnap.exists()) {
     // TODO: ログイン履歴の更新
@@ -35,7 +35,7 @@ export const signinUser = async (req, res) => {
     })
     res.send({
       status: 'unactivated',
-      token: customToken,
+      // token: customToken,
     })
   }
 }
