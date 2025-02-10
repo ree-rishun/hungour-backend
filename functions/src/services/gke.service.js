@@ -49,6 +49,10 @@ export const deployPod = async (conciergeId) => {
                 value: await getEnv('API_URL'),
               },
               {
+                name: 'CLIENT_BASE_URL',
+                value: await getEnv('CLIENT_BASE_URL'),
+              },
+              {
                 name: 'TWILIO_ACCOUNT_SID',
                 value: await getEnv('TWILIO_ACCOUNT_SID'),
               },
@@ -63,6 +67,14 @@ export const deployPod = async (conciergeId) => {
               {
                 name: 'GEMINI_API_KEY',
                 value: await getEnv('GEMINI_API_KEY'),
+              },
+              {
+                name: 'LINE_CHANNEL_SECRET',
+                value: await getEnv('LINE_CHANNEL_SECRET'),
+              },
+              {
+                name: 'LINE_CHANNEL_ACCESS_TOKEN',
+                value: await getEnv('LINE_CHANNEL_ACCESS_TOKEN'),
               },
             ],
           },
